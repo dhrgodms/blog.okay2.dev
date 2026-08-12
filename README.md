@@ -1,4 +1,4 @@
-# blog.okay.dev
+# blog.okay2.dev
 
 공부한 것들을 기록하는 블로그. [Astro](https://astro.build)로 만들었고 GitHub Pages로 배포됩니다.
 
