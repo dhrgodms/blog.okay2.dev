@@ -1,6 +1,7 @@
 ---
 title: '시작'
 description: '공부한 것들을 기록하기 시작합니다.'
+category: 'General'
 pubDate: 'Aug 12 2026'
 ---
 
