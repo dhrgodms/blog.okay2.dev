@@ -8,6 +8,11 @@ import { defineConfig, fontProviders } from 'astro/config';
 export default defineConfig({
 	site: 'https://blog.okay2.dev',
 	integrations: [mdx(), sitemap()],
+	markdown: {
+		shikiConfig: {
+			theme: 'css-variables',
+		},
+	},
 	fonts: [
 		{
 			provider: fontProviders.local(),

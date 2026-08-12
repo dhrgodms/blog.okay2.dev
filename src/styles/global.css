@@ -16,6 +16,19 @@
 	--box-shadow:
 		0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%),
 		0 16px 32px rgba(var(--gray), 33%);
+
+	/* code block colors (Shiki css-variables theme) — kept grayscale, no purple */
+	--astro-code-foreground: #e5e1da;
+	--astro-code-background: #201e1a;
+	--astro-code-token-constant: #cfcac0;
+	--astro-code-token-string: #b0aa9e;
+	--astro-code-token-comment: #7a746a;
+	--astro-code-token-keyword: #d8d3c8;
+	--astro-code-token-parameter: #cfcac0;
+	--astro-code-token-function: #e5e1da;
+	--astro-code-token-string-expression: #b0aa9e;
+	--astro-code-token-punctuation: #9c968b;
+	--astro-code-token-link: #b0aa9e;
 }
 body {
 	font-family: var(--font-atkinson);
