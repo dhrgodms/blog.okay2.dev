@@ -5,6 +5,7 @@ import ContributionGraph from '../components/ContributionGraph.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
+import MiniGraph from '../components/MiniGraph.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
 const posts = (await getCollection('blog')).sort(
@@ -26,6 +27,17 @@ const postsByCategory = categories
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
+			.top-section {
+				display: flex;
+				justify-content: space-between;
+				align-items: flex-start;
+				gap: 1.5em;
+				margin-bottom: 1.5em;
+			}
+			.top-section > :first-child {
+				flex: 1;
+				min-width: 0;
+			}
 			.category {
 				margin-bottom: 2.5em;
 			}
@@ -71,7 +83,10 @@ const postsByCategory = categories
 	<body>
 		<Header />
 		<main>
-			<ContributionGraph dates={posts.map((post) => post.data.pubDate)} weeks={52} />
+			<div class="top-section">
+				<ContributionGraph dates={posts.map((post) => post.data.pubDate)} weeks={52} />
+				<MiniGraph />
+			</div>
 			{
 				postsByCategory.map(({ category, posts }) => (
 					<section class="category">

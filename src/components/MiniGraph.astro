@@ -1,0 +1,166 @@
+---
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog');
+const slugSet = new Set(posts.map((p) => p.id));
+
+const nodes = posts.map((p) => ({ id: p.id, title: p.data.title }));
+
+const linkRegex = /\]\(\/blog\/([^)]+)\/\)/g;
+const edgeKeys = new Set();
+const edges = [];
+for (const post of posts) {
+	const body = post.body ?? '';
+	for (const match of body.matchAll(linkRegex)) {
+		const target = decodeURIComponent(match[1]);
+		if (target === post.id || !slugSet.has(target)) continue;
+		const key = [post.id, target].sort().join('::');
+		if (edgeKeys.has(key)) continue;
+		edgeKeys.add(key);
+		edges.push({ source: post.id, target });
+	}
+}
+
+const graphData = JSON.stringify({ nodes, edges });
+---
+
+<div class="mini-graph">
+	{nodes.length > 0 && <svg id="mini-graph-svg" viewBox="0 0 220 160"></svg>}
+</div>
+
+<style>
+	.mini-graph {
+		width: 176px;
+		height: 132px;
+		flex-shrink: 0;
+		box-sizing: border-box;
+		padding: 0.5em;
+		background: rgba(var(--gray-light), 0.4);
+		border: 1px solid rgb(var(--gray-light));
+		border-radius: 12px;
+	}
+	.mini-graph svg {
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+	:global(.mini-graph .edge) {
+		stroke: rgb(var(--gray-light));
+		stroke-width: 1;
+	}
+	:global(.mini-graph .node circle) {
+		fill: rgb(var(--accent-rgb));
+	}
+	:global(.mini-graph .node.isolated circle) {
+		fill: rgb(var(--gray));
+	}
+	:global(.mini-graph .node:hover circle) {
+		fill: rgb(var(--accent-dark));
+	}
+</style>
+
+<script define:vars={{ graphData }}>
+	const { nodes, edges } = JSON.parse(graphData);
+	const width = 220;
+	const height = 160;
+
+	const linkedIds = new Set(edges.flatMap((e) => [e.source, e.target]));
+
+	const pos = new Map();
+	nodes.forEach((n, i) => {
+		const angle = (i / nodes.length) * Math.PI * 2;
+		const r = Math.min(width, height) / 3;
+		pos.set(n.id, {
+			x: width / 2 + Math.cos(angle) * r,
+			y: height / 2 + Math.sin(angle) * r,
+			vx: 0,
+			vy: 0,
+		});
+	});
+
+	for (let iter = 0; iter < 300; iter++) {
+		for (let i = 0; i < nodes.length; i++) {
+			for (let j = i + 1; j < nodes.length; j++) {
+				const a = pos.get(nodes[i].id);
+				const b = pos.get(nodes[j].id);
+				const dx = a.x - b.x;
+				const dy = a.y - b.y;
+				const distSq = Math.max(dx * dx + dy * dy, 1);
+				const dist = Math.sqrt(distSq);
+				const force = 500 / distSq;
+				const fx = (dx / dist) * force;
+				const fy = (dy / dist) * force;
+				a.vx += fx;
+				a.vy += fy;
+				b.vx -= fx;
+				b.vy -= fy;
+			}
+		}
+		for (const e of edges) {
+			const a = pos.get(e.source);
+			const b = pos.get(e.target);
+			if (!a || !b) continue;
+			const dx = b.x - a.x;
+			const dy = b.y - a.y;
+			const dist = Math.max(Math.sqrt(dx * dx + dy * dy), 1);
+			const targetLen = 40;
+			const force = (dist - targetLen) * 0.02;
+			const fx = (dx / dist) * force;
+			const fy = (dy / dist) * force;
+			a.vx += fx;
+			a.vy += fy;
+			b.vx -= fx;
+			b.vy -= fy;
+		}
+		for (const p of pos.values()) {
+			p.vx += (width / 2 - p.x) * 0.003;
+			p.vy += (height / 2 - p.y) * 0.003;
+			p.vx *= 0.85;
+			p.vy *= 0.85;
+			p.x += p.vx;
+			p.y += p.vy;
+		}
+	}
+
+	const svg = document.getElementById('mini-graph-svg');
+	if (svg) {
+		const ns = 'http://www.w3.org/2000/svg';
+		const pad = 10;
+		for (const p of pos.values()) {
+			p.x = Math.min(width - pad, Math.max(pad, p.x));
+			p.y = Math.min(height - pad, Math.max(pad, p.y));
+		}
+
+		for (const e of edges) {
+			const a = pos.get(e.source);
+			const b = pos.get(e.target);
+			if (!a || !b) continue;
+			const line = document.createElementNS(ns, 'line');
+			line.setAttribute('class', 'edge');
+			line.setAttribute('x1', a.x);
+			line.setAttribute('y1', a.y);
+			line.setAttribute('x2', b.x);
+			line.setAttribute('y2', b.y);
+			svg.appendChild(line);
+		}
+
+		for (const n of nodes) {
+			const p = pos.get(n.id);
+			const a = document.createElementNS(ns, 'a');
+			a.setAttribute('href', `/blog/${n.id}/`);
+			a.setAttribute('class', `node${linkedIds.has(n.id) ? '' : ' isolated'}`);
+
+			const title = document.createElementNS(ns, 'title');
+			title.textContent = n.title;
+			a.appendChild(title);
+
+			const circle = document.createElementNS(ns, 'circle');
+			circle.setAttribute('cx', p.x);
+			circle.setAttribute('cy', p.y);
+			circle.setAttribute('r', 4);
+			a.appendChild(circle);
+
+			svg.appendChild(a);
+		}
+	}
+</script>

@@ -9,13 +9,15 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "publish": "node scripts/publish-from-obsidian.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.5",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.3",
     "astro": "^7.2.1",
+    "gray-matter": "^4.0.3",
     "sharp": "^0.35.0"
   }
 }

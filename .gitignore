@@ -22,3 +22,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# local obsidian vault path for the publish script
+.obsidian-vault-path
