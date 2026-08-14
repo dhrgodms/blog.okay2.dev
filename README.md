@@ -17,6 +17,7 @@ npm run dev
 ---
 title: '제목'
 description: '설명'
+category: '카테고리 (기본값: General)'
 pubDate: 'Aug 12 2026'
 ---
 
