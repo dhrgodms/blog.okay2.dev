@@ -3,12 +3,14 @@
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig, fontProviders } from 'astro/config';
+import remarkObsidianCallout from './src/plugins/remark-obsidian-callout.mjs';
 
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://blog.okay2.dev',
 	integrations: [mdx(), sitemap()],
 	markdown: {
+		remarkPlugins: [remarkObsidianCallout],
 		shikiConfig: {
 			theme: 'vitesse-dark',
 		},

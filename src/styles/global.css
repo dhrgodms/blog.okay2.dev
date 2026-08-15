@@ -110,6 +110,95 @@ blockquote {
 	margin: 0;
 	font-size: 1.333em;
 }
+.callout {
+	--callout-color: 8, 109, 221;
+	border-radius: 8px;
+	border: 1px solid rgba(var(--callout-color), 0.25);
+	background-color: rgba(var(--callout-color), 0.08);
+	padding: 0.75em 1em;
+	margin: 1.5em 0;
+	font-size: 1em;
+}
+.callout-title {
+	font-weight: 700;
+	margin-bottom: 0.5em;
+}
+.callout-type {
+	font-style: normal;
+	font-size: 0.85em;
+	font-weight: 700;
+	letter-spacing: 0.03em;
+	color: rgb(var(--callout-color));
+}
+.callout > :last-child {
+	margin-bottom: 0;
+}
+details.callout > summary.callout-title {
+	cursor: pointer;
+	list-style: none;
+}
+details.callout > summary.callout-title::-webkit-details-marker {
+	display: none;
+}
+details.callout > summary.callout-title::after {
+	content: '▸';
+	margin-left: auto;
+	transition: transform 0.15s ease;
+}
+details.callout[open] > summary.callout-title::after {
+	transform: rotate(90deg);
+}
+.callout[data-callout='note'],
+.callout[data-callout='info'] {
+	--callout-color: 8, 109, 221;
+}
+.callout[data-callout='abstract'],
+.callout[data-callout='summary'],
+.callout[data-callout='tldr'] {
+	--callout-color: 0, 191, 188;
+}
+.callout[data-callout='todo'] {
+	--callout-color: 8, 109, 221;
+}
+.callout[data-callout='tip'],
+.callout[data-callout='hint'],
+.callout[data-callout='important'] {
+	--callout-color: 0, 191, 188;
+}
+.callout[data-callout='success'],
+.callout[data-callout='check'],
+.callout[data-callout='done'] {
+	--callout-color: 68, 163, 61;
+}
+.callout[data-callout='question'],
+.callout[data-callout='help'],
+.callout[data-callout='faq'] {
+	--callout-color: 236, 155, 0;
+}
+.callout[data-callout='warning'],
+.callout[data-callout='caution'],
+.callout[data-callout='attention'] {
+	--callout-color: 236, 155, 0;
+}
+.callout[data-callout='failure'],
+.callout[data-callout='fail'],
+.callout[data-callout='missing'] {
+	--callout-color: 233, 49, 71;
+}
+.callout[data-callout='danger'],
+.callout[data-callout='error'] {
+	--callout-color: 233, 49, 71;
+}
+.callout[data-callout='bug'] {
+	--callout-color: 233, 49, 71;
+}
+.callout[data-callout='example'] {
+	--callout-color: 120, 82, 238;
+}
+.callout[data-callout='quote'],
+.callout[data-callout='cite'] {
+	--callout-color: 158, 158, 158;
+}
 hr {
 	border: none;
 	border-top: 1px solid rgb(var(--gray-light));
