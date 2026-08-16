@@ -3,6 +3,7 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync, copyFileSync, statS
 import { join, dirname, basename, extname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
+import { tightenLists } from './lib/tighten-lists.mjs';
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const BLOG_DIR = join(ROOT, 'src/content/blog');
@@ -129,6 +130,8 @@ function transformBody(body, { slug, fileIndex, publishedIndex }) {
 		convertedToText++;
 		return label;
 	});
+
+	result = tightenLists(result);
 
 	return { body: result, missingImages, usedImages, convertedToLinks, convertedToText, linkedSlugs };
 }
