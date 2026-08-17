@@ -3,6 +3,7 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync, copyFileSync, statS
 import { join, dirname, basename, extname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
+import { slug as githubSlug } from 'github-slugger';
 import { tightenLists } from './lib/tighten-lists.mjs';
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -53,13 +54,13 @@ function buildFileIndex(allFiles) {
 }
 
 function slugify(name) {
-	// Astro's content glob loader lowercases generated entry ids, so the
-	// slug we write here must already be lowercase or cross-post links break.
-	return name
-		.trim()
-		.toLowerCase()
-		.replace(/\s+/g, '-')
-		.replace(/[/\\?%*:|"<>]/g, '');
+	// Must exactly match Astro's content glob loader, which derives each
+	// post's routed id by running github-slugger over the filename (see
+	// getContentEntryIdAndSlug in astro/dist/content/utils.js). A hand-rolled
+	// approximation here silently drifts from the real route (e.g. periods
+	// and parentheses survive a naive slugify but github-slugger strips
+	// them), which breaks any cross-post link we generate.
+	return githubSlug(name.trim());
 }
 
 function formatPubDate(date) {

@@ -25,3 +25,7 @@ pnpm-debug.log*
 
 # local obsidian vault path for the publish script
 .obsidian-vault-path
+
+# drop zone for the blog-publish skill (single md handed over without the vault)
+inbox/*
+!inbox/.gitkeep
