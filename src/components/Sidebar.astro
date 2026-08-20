@@ -1,0 +1,97 @@
+---
+import { getCollection } from 'astro:content';
+
+interface Props {
+	activeCategory?: string;
+	activeSlug?: string;
+}
+
+const { activeCategory, activeSlug } = Astro.props;
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf(),
+);
+
+const categories = [...new Set(posts.map((post) => post.data.category))];
+
+const postsByCategory = categories
+	.map((category) => ({
+		category,
+		posts: posts.filter((post) => post.data.category === category),
+	}))
+	.sort((a, b) => a.category.localeCompare(b.category));
+---
+
+<aside class="sidebar">
+	<nav>
+		{
+			postsByCategory.map(({ category, posts }) => (
+				<details open={category === activeCategory}>
+					<summary>{category}</summary>
+					<ul>
+						{posts.map((post) => (
+							<li>
+								<a href={`/blog/${post.id}/`} class:list={{ active: post.id === activeSlug }}>
+									{post.data.title}
+								</a>
+							</li>
+						))}
+					</ul>
+				</details>
+			))
+		}
+	</nav>
+</aside>
+<style>
+	.sidebar {
+		width: 220px;
+		flex-shrink: 0;
+		padding: 2em 1em;
+	}
+	details {
+		margin-bottom: 0.3em;
+	}
+	summary {
+		cursor: pointer;
+		list-style: none;
+		padding: 0.4em 0;
+		font-weight: 700;
+		font-size: 0.95em;
+		color: rgb(var(--black));
+	}
+	summary::-webkit-details-marker {
+		display: none;
+	}
+	summary::before {
+		content: '▸';
+		display: inline-block;
+		width: 1em;
+		transition: transform 0.15s ease;
+	}
+	details[open] > summary::before {
+		transform: rotate(90deg);
+	}
+	ul {
+		list-style: none;
+		margin: 0 0 0.4em 0;
+		padding: 0 0 0 1.4em;
+	}
+	li {
+		margin: 0.35em 0;
+	}
+	a {
+		color: rgb(var(--gray));
+		text-decoration: none;
+		font-size: 0.9em;
+		line-height: 1.4;
+	}
+	a:hover,
+	a.active {
+		color: var(--accent);
+	}
+	@media (max-width: 900px) {
+		.sidebar {
+			display: none;
+		}
+	}
+</style>
