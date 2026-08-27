@@ -48,7 +48,7 @@ cat /etc/fstab
 vi /etc/fstab
 ```
 
-![](../../assets/blog/9-디스크-쿼터disk-quota/Pasted image 20260827230126.png)
+![](../../assets/blog/9-디스크-쿼터disk-quota/Pasted%20image%2020260827230126.png)
 
 파일 시스템 마운트 옵션에 쿼터 옵션을 추가한다.
 

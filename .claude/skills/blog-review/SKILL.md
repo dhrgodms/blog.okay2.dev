@@ -45,6 +45,12 @@ For either case, once a matching post is identified: fix directly with Edit, rep
 
 If nothing is wrong, say so briefly instead of listing nothing.
 
+### 6. 이미지 경로 확인
+For every local image link `![...](../../assets/blog/...)` in the body:
+- Check the referenced file actually exists on disk at that path (URL-decode the path first, since links may use `%20` etc.).
+- Check the link is properly URL-encoded — no literal spaces or other characters that break a markdown link destination (e.g. `Pasted image 20260827230126.png` must appear in the link as `Pasted%20image%2020260827230126.png`). An unencoded space silently breaks the image with no build error, so it's easy to miss.
+- If broken, fix directly with Edit (`encodeURIComponent` the filename portion, keep the file on disk unrenamed) and note the fix.
+
 ## Output
 
 End with a short summary: ready to publish, or N items need the user's attention (list which). Keep the whole response tight — this is a quick pre-publish pass, not a deep audit.

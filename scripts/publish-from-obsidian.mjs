@@ -116,7 +116,7 @@ function transformBody(body, { slug, fileIndex, publishedIndex }) {
 		mkdirSync(destDir, { recursive: true });
 		copyFileSync(src, join(destDir, name));
 		usedImages.push(name);
-		return `![](../../assets/blog/${slug}/${name})`;
+		return `![](../../assets/blog/${slug}/${encodeURIComponent(name)})`;
 	});
 
 	result = result.replace(/\[\[([^\]|]+)(\|([^\]]+))?\]\]/g, (_match, target, _aliasGroup, alias) => {
