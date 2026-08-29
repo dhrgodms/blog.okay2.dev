@@ -35,7 +35,18 @@ Match `scripts/publish-from-obsidian.mjs` behavior, but resolve against files on
 - Leave standard markdown images/links (`![]()`, `[]()`) untouched.
 - **Tighten lists**: run the body through `tightenLists` from `scripts/lib/tighten-lists.mjs` (e.g. `node -e 'import("./scripts/lib/tighten-lists.mjs").then(({tightenLists}) => console.log(tightenLists(body)))'`, or just apply the same rule by hand). Obsidian outline notes often leave a stray blank line inside a bulleted list (commonly right after an image embedded under a bullet, or between a nested sub-bullet and the next top-level bullet). CommonMark treats any such blank line as making the *whole* list "loose," which wraps every item in `<p>` and blows up the line spacing on the published page. Drop blank lines that sit between list content and the next list item; keep blank lines that separate a list from actual non-list content.
 
-## 4. Write the post
+## 4. Connect related posts
+
+Read the other posts in `src/content/blog/*.md` (skip `hello.md`, `linux-commands-example.md`, `markdown-style-guide.md`) and look for genuine content overlap with the new post — a term it uses that another post defines/expands, a direct continuation of a prior post's topic, or a shared concept approached from different angles. Category match alone isn't enough; the connection has to be about actual shared content.
+
+For each real match:
+- Where a specific term/concept is used in the body, add a short inline link there: `[label](/blog/{real-slug}/)`, using the target's real routed slug (from the same `github-slugger` computation as the `slug` field above, not its raw filename).
+- Add a `## 관련 글` section near the end of the transformed body listing the related posts: `- [title](/blog/{real-slug}/) — one-line reason`.
+- If an existing sibling post would clearly benefit from linking back to this new one (e.g. the new post is a direct continuation of it), add that reciprocal link in the sibling file too, and mention the edit in the summary.
+
+Skip this step (no `관련 글` section) if nothing in the existing posts is genuinely related to the new one — don't force connections that only share a category.
+
+## 5. Write the post
 
 Write `src/content/blog/{slug}.md` with frontmatter in this exact field order (matches the existing pipeline's output):
 
@@ -50,18 +61,18 @@ pubDate: "Mon D YYYY"
 {transformed body}
 ```
 
-Show the user a short summary before committing: slug, title, pubDate, any auto-generated description, any missing images, any wikilinks converted to plain text.
+Show the user a short summary before committing: slug, title, pubDate, any auto-generated description, any missing images, any wikilinks converted to plain text, any related posts linked (and any sibling files touched for reciprocal links).
 
-## 5. Commit
+## 6. Commit
 
-- `git add` the new post file plus any newly copied images under `src/assets/blog/{slug}/`.
+- `git add` the new post file, any newly copied images under `src/assets/blog/{slug}/`, and any sibling post files edited for reciprocal related-post links.
 - Commit with a concise message (Korean is fine, match the repo's existing commit style — short imperative summary, no filler).
 - **Do not add a `Co-Authored-By: Claude` trailer to this commit** — the user explicitly asked to keep Claude out of the contributor list for blog posts. This overrides the usual default for this skill only.
 
-## 6. Push — ask first
+## 7. Push — ask first
 
 Pushing `main` triggers `.github/workflows/deploy.yml`, which deploys straight to the live GitHub Pages site. After committing, tell the user what was committed and ask whether to push now. Only run `git push` after they confirm.
 
-## 7. Cleanup
+## 8. Cleanup
 
 After a successful push, ask whether to delete the source file (and any images) from `inbox/`, rather than deleting it unprompted.
